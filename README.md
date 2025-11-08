@@ -3,7 +3,7 @@
 
 ---
 
-## Overview
+## 1-Overview
 This project aims to build a **film recommendation system** based on the **MovieLens** dataset.  To achieve our goal we use a method called `Approximate Nearest Neighbors(ANN)`
 
 The **ANN Movie Recommender** is a recommendation engine that combines **content-based**, **collaborative**, and **hybrid filtering** approaches using **Approximate Nearest Neighbor (ANN)** search with **HNSW (Hierarchical Navigable Small World)** graphs.
@@ -13,7 +13,7 @@ This framework makes it easy to explore, visualize, and understand how movie rec
 
 ---
 
-## Key Features
+## 2-Key Features
 - **Content-Based Filtering** -> Recommends movies with similar *features or genres*.  
 - **Collaborative Filtering** -> Suggests movies liked by *similar users* (based on ratings).  
 - **Hybrid Filtering (Mixed)** -> Merges both models proportionally using weights ``` alpha ```and ``` beta ```.  
@@ -22,17 +22,18 @@ This framework makes it easy to explore, visualize, and understand how movie rec
 
 ---
 
-## Architecture
+## 3-Architecture
 
-<img src="assets/architecture.png" alt="System Architecture" width="450"/>
+<img src="assets/architecture.png" alt="System Architecture" width="300"/>
 
 
 
 ---
 
-## Recommendation Methods
+## 4-Recommendation Methods
 ### Content-Based (Cosine Similarity)
-Each movie is represented as a vector of features or genres.  
+Each movie (item) is represented as a vector based on content features such as genres 
+
 Similarity is computed as:
 
 $$
@@ -41,22 +42,44 @@ $$
 
 ---
 
-### Collaborative Filtering (Item-Item ANN)
-Each item vector is constructed from user ratings:
+### 5-Collaborative Filtering (Item-Item ANN)
+Each movie (item) is represented as a vector based on **user ratings** rather than content features.  
+The goal is to find movies that tend to be liked by the *same group of users*.
+
+**a.** Each item vector is constructed from user ratings:
 
 $$
 v_i[u] = r(u,i) - \bar{r_i}
 $$
 
-User profile:
+- \(r(u,i)\): rating of movie *i* by user *u*.  
+- \(\bar{r_i}\): average rating of movie *i* across all users.  
+- This centering step removes **popularity bias**, highlighting how much each user’s opinion deviates from the average.  
+  Positive values mean the user liked it more than most people; negative means less.
+
+
+**b.** User profile:
 
 $$
 \mathbf{p_u} = \frac{1}{|I_u|} \sum_{i \in I_u, r(u,i) > 4} v_i
 $$
 
+- \(I_u\): set of movies rated by user *u*.  
+- \(r(u,i) > 4\): we only keep movies the user *really liked*.  
+- \(|I_u|\): number of liked movies.  
+- The resulting vector \(\mathbf{p_u}\) is the **average of all item vectors the user enjoyed**,  
+  capturing their **personal taste profile**.
+  
+
+**Key Idea:**  
+Collaborative filtering does not care about *what* the movie is about - 
+it cares about **who** liked it.  
+It finds patterns like:  
+> `“Users who loved *Movie A* also loved *Movie B*.”`
+
 ---
 
-### Hybrid (Mixed)
+### 6-Hybrid (Mixed)
 A combined recommendation list using weighted sampling:
 
 $$
@@ -65,7 +88,7 @@ $$
 
 ---
 
-## Evaluation Metrics
+## 7-Evaluation Metrics
 
 | Metric | Description |
 |--------|--------------|
@@ -77,12 +100,12 @@ $$
 
 ---
 
-## Prerequisites
+## 8-Prerequisites
 
 Before running the app, ensure you have:
 1. **Neo4j Database** (Desktop, AuraDB, or Docker).  
 
-2. **MovieLens Dataset** (movies.csv & ratings.csv).  
+2. **MovieLens Dataset** (`movies.csv` & `ratings.csv`).  
 
 3. **Python 3.8+** installed.  
 
@@ -95,14 +118,14 @@ Before running the app, ensure you have:
 
 6. Access Neo4j Browser locally at [http://localhost:7474/](http://localhost:7474/).  
 
-If you experience issues setting up Neo4j, refer to the official [Neo4j Docs](https://neo4j.com/docs/) or the [GitHub installation guide](https://github.com/).
+If you experience issues setting up Neo4j, refer to the official [Neo4j Docs](https://neo4j.com/docs/)
 
 
 ---
 
 
 
-## Run the App
+## 9-Run the App
 
 1. Clone the repository:
    ```bash
@@ -129,23 +152,23 @@ If you experience issues setting up Neo4j, refer to the official [Neo4j Docs](ht
 
   - Malkov, Y. & Yashunin, D. (2018). *Efficient and Robust Approximate Nearest Neighbor Search Using HNSW*. [arXiv:1603.09320](https://arxiv.org/abs/1603.09320)  
   - [Movielens Dataset](https://grouplens.org/datasets/movielens/)  
-  - [Cosine Similarity – Medium](https://naomy-gomes.medium.com/the-cosine-similarity-and-its-use-in-recommendation-systems-cb2ebd811ce1)  
-  - [Content-Based Recommender – GeeksforGeeks](https://www.geeksforgeeks.org/machine-learning/ml-content-based-recommender-system/)  
-  - [Approximate Nearest Neighbor Search – GeeksforGeeks](https://www.geeksforgeeks.org/machine-learning/approximate-nearest-neighbor-ann-search/)  
-  - [Collaborative Filtering – GeeksforGeeks](https://www.geeksforgeeks.org/collaborative-filtering-in-recommendation-systems/)  
-  - [Naomy Gomes – Cosine Similarity and its use in Recommender Systems](https://naomy-gomes.medium.com/the-cosine-similarity-and-its-use-in-recommendation-systems-cb2ebd811ce1)  
+  - [Cosine Similarity - Medium](https://naomy-gomes.medium.com/the-cosine-similarity-and-its-use-in-recommendation-systems-cb2ebd811ce1)  
+  - [Content-Based Recommender - GeeksforGeeks](https://www.geeksforgeeks.org/machine-learning/ml-content-based-recommender-system/)  
+  - [Approximate Nearest Neighbor Search - GeeksforGeeks](https://www.geeksforgeeks.org/machine-learning/approximate-nearest-neighbor-ann-search/)  
+  - [Collaborative Filtering - GeeksforGeeks](https://www.geeksforgeeks.org/collaborative-filtering-in-recommendation-systems/)  
+  - [Naomy Gomes - Cosine Similarity and its use in Recommender Systems](https://naomy-gomes.medium.com/the-cosine-similarity-and-its-use-in-recommendation-systems-cb2ebd811ce1)  
 
   - [Neo4j Graph Data Science Documentation](https://neo4j.com/docs/graph-data-science/current/)
-  - [FAISS – Facebook AI Similarity Search](https://github.com/facebookresearch/faiss)  
-  - [Annoy – Spotify Approximate Nearest Neighbors](https://github.com/spotify/annoy)  
-  - [Voyager – Spotify HNSW-based ANN](https://github.com/spotify/voyager)  
+  - [FAISS - Facebook AI Similarity Search](https://github.com/facebookresearch/faiss)  
+  - [Annoy - Spotify Approximate Nearest Neighbors](https://github.com/spotify/annoy)  
+  - [Voyager - Spotify HNSW-based ANN](https://github.com/spotify/voyager)  
 
 ---
 
 ## 👥 Authors
 
-- **Glorie Metsa Wowo** – [LinkedIn](https://www.linkedin.com/in/glorie-wowo-data-science-edtech)  
-- **Fathnelle Mehouelley** – [LinkedIn](https://www.linkedin.com/in/fathnelle-mehouelley/)
+- **Glorie Metsa Wowo** - [LinkedIn](https://www.linkedin.com/in/glorie-wowo-data-science-edtech)  
+- **Fathnelle Mehouelley** - [LinkedIn](https://www.linkedin.com/in/fathnelle-mehouelley/)
 
 ---
 
