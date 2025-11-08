@@ -111,7 +111,7 @@ Before running the app, ensure you have:
 
 4. Required packages installed:  
    ```bash
-   pip install streamlit neo4j hnswlib pandas numpy
+   pip install streamlit neo4j hnswlib pandas numpy plotly
    ```
 
 5. **Valid Neo4j credentials** (`username`, `password`, `bolt://localhost:7687`).  
