@@ -24,7 +24,8 @@ This framework makes it easy to explore, visualize, and understand how movie rec
 
 ## Architecture
 
-![System Architecture](assets/architecture_diagram.png)
+<img src="assets/architecture.png" alt="System Architecture" width="450"/>
+
 
 
 ---
