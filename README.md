@@ -14,9 +14,9 @@ This framework makes it easy to explore, visualize, and understand how movie rec
 ---
 
 ## Key Features
-- **Content-Based Filtering** → Recommends movies with similar *features or genres*.  
-- **Collaborative Filtering** → Suggests movies liked by *similar users* (based on ratings).  
-- **Hybrid Filtering (Mixed)** → Merges both models proportionally using weights \( \alpha \) and \( \beta \).  
+- **Content-Based Filtering** -> Recommends movies with similar *features or genres*.  
+- **Collaborative Filtering** -> Suggests movies liked by *similar users* (based on ratings).  
+- **Hybrid Filtering (Mixed)** -> Merges both models proportionally using weights ``` alpha ```and ``` beta ```.  
 - **Interactive Evaluation Metrics**: Balance Score, Content Quality, Personalization, Novelty, and Serendipity.  
 - **Neo4j Integration** for graph-based querying of users, movies, and relationships.  
 
@@ -31,34 +31,37 @@ This framework makes it easy to explore, visualize, and understand how movie rec
 ---
 
 ## Recommendation Methods
-
 ### Content-Based (Cosine Similarity)
 Each movie is represented as a vector of features or genres.  
 Similarity is computed as:
 
-\[
-\cos(\mathbf{x}, \mathbf{y}) = \frac{\mathbf{x} \cdot \mathbf{y}}{\|\mathbf{x}\| \|\mathbf{y}\|}
-\]
+$$
+\cos(\mathbf{x}, \mathbf{y}) = \frac{\mathbf{x} \cdot \mathbf{y}}{\|\mathbf{x}\| \, \|\mathbf{y}\|}
+$$
+
+---
 
 ### Collaborative Filtering (Item-Item ANN)
 Each item vector is constructed from user ratings:
 
-\[
+$$
 v_i[u] = r(u,i) - \bar{r_i}
-\]
+$$
 
 User profile:
 
-\[
+$$
 \mathbf{p_u} = \frac{1}{|I_u|} \sum_{i \in I_u, r(u,i) > 4} v_i
-\]
+$$
+
+---
 
 ### Hybrid (Mixed)
 A combined recommendation list using weighted sampling:
 
-\[
+$$
 s(m) = \alpha \cdot s_{content}(m) + \beta \cdot s_{cf}(m)
-\]
+$$
 
 ---
 

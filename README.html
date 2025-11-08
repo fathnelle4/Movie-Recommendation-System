@@ -381,15 +381,15 @@ ratings, and hybrid weighting.</p>
 <div id="key-features" class="section level2">
 <h2>Key Features</h2>
 <ul>
-<li><strong>Content-Based Filtering</strong> → Recommends movies with
-similar <em>features or genres</em>.<br />
+<li><strong>Content-Based Filtering</strong> -&gt; Recommends movies
+with similar <em>features or genres</em>.<br />
 </li>
-<li><strong>Collaborative Filtering</strong> → Suggests movies liked by
-<em>similar users</em> (based on ratings).<br />
+<li><strong>Collaborative Filtering</strong> -&gt; Suggests movies liked
+by <em>similar users</em> (based on ratings).<br />
 </li>
-<li><strong>Hybrid Filtering (Mixed)</strong> → Merges both models
-proportionally using weights <span class="math inline">\(\alpha\)</span>
-and <span class="math inline">\(\beta\)</span>.<br />
+<li><strong>Hybrid Filtering (Mixed)</strong> -&gt; Merges both models
+proportionally using weights <code>alpha</code>and
+<code>beta</code>.<br />
 </li>
 <li><strong>Interactive Evaluation Metrics</strong>: Balance Score,
 Content Quality, Personalization, Novelty, and Serendipity.<br />
@@ -412,8 +412,9 @@ users, movies, and relationships.</li>
 Similarity is computed as:</p>
 <p><span class="math display">\[
 \cos(\mathbf{x}, \mathbf{y}) = \frac{\mathbf{x} \cdot
-\mathbf{y}}{\|\mathbf{x}\| \|\mathbf{y}\|}
+\mathbf{y}}{\|\mathbf{x}\| \, \|\mathbf{y}\|}
 \]</span></p>
+<hr />
 </div>
 <div id="collaborative-filtering-item-item-ann" class="section level3">
 <h3>Collaborative Filtering (Item-Item ANN)</h3>
@@ -425,6 +426,7 @@ v_i[u] = r(u,i) - \bar{r_i}
 <p><span class="math display">\[
 \mathbf{p_u} = \frac{1}{|I_u|} \sum_{i \in I_u, r(u,i) &gt; 4} v_i
 \]</span></p>
+<hr />
 </div>
 <div id="hybrid-mixed" class="section level3">
 <h3>Hybrid (Mixed)</h3>
