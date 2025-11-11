@@ -12,7 +12,7 @@ from metrics_implementation import *
 # Page setup & styles
 # ===============================
 st.set_page_config(
-    page_title="🎬 ANN Movie Recommender (Neo4j)",
+    page_title="🎬 Movie Recommendation System",
     page_icon="🎬",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -130,6 +130,7 @@ def fetch_ratings(driver) -> pd.DataFrame:
         """)
         rows = [dict(r) for r in res]
     return pd.DataFrame(rows)
+
 #=====================================
 # Check if data exist
 #=======================================
@@ -514,67 +515,7 @@ def build_hnsw_index(vectors: np.ndarray, space: str = "cosine", M: int = 32, ef
 # ===============================
 # Recommendation pipelines
 # ===============================
-# def recommend_content_ann(selected_title: str, k: int) -> pd.DataFrame:
-#     df = st.session_state.movie_df
-#     row = df.index[df["title"] == selected_title]
-#     if len(row) == 0:
-#         return pd.DataFrame()
-#     ridx = int(row[0])
-#     if st.session_state.content_index is None:
-#         return pd.DataFrame()
-#     labels, distances = st.session_state.content_index.knn_query(
-#         st.session_state.movie_vectors_content[ridx:ridx+1], k=k+20
-#     )
-#     labels = labels[0].tolist()
-#     distances = distances[0].tolist()
 
-#     # out = []
-#     # for lbl, dist in zip(labels, distances):
-#     #     if lbl == ridx:
-#     #         continue
-#     #     mid = st.session_state.row_to_movie[lbl]
-#     #     title = df.iloc[lbl]["title"]
-#     #     genres = df.iloc[lbl]["genres"]
-#     #     score = 1.0 - float(dist)  # cosine similarity = 1 - distance
-#     #     out.append({"title": title, "genres": genres, "cosine_similarity": round(score, 4)})
-#     #     if len(out) >= k:
-#     #         break
-#     # return pd.DataFrame(out)
-#     out = []
-#     for lbl, dist in zip(labels, distances):
-#         if lbl == ridx:
-#             continue
-        
-#         score = 1.0 - float(dist)
-        
-#         # ✅ ADD THIS: Skip perfect matches
-#         if score >= 0.999:  # Skip identical genre combinations
-#             continue
-        
-#         mid = st.session_state.row_to_movie[lbl]
-#         title = df.iloc[lbl]["title"]
-#         genres = df.iloc[lbl]["genres"]
-#         out.append({"title": title, "genres": genres, "cosine_similarity": round(score, 4)})
-        
-#         if len(out) >= k:
-#             break
-            
-#         elif len(out) ==0:
-#             # st.write("you are here")
-#             # out = []
-#             for lbl, dist in zip(labels, distances):
-#                 if lbl == ridx:
-#                     continue
-#                 mid = st.session_state.row_to_movie[lbl]
-#                 title = df.iloc[lbl]["title"]
-#                 genres = df.iloc[lbl]["genres"]
-#                 score = 1.0 - float(dist)  # cosine similarity = 1 - distance
-#                 out.append({"title": title, "genres": genres, "cosine_similarity": round(score, 3)})
-#                 if len(out) >= k:
-#                     break
-#         # st.write("ggggyou are here")
-    
-#     return pd.DataFrame(out)
 
 def recommend_content_ann(selected_title: str,  k: int)-> pd.DataFrame:
     """
@@ -813,8 +754,7 @@ def show_sidebar():
                 st.error(f"Stats error: {e}")
         else:
             st.info("📡 Not connected")
-import pandas as pd
-import numpy as np
+
 
 def recommend_hybrid_ann(user_id: int, anchor_title: str, k: int,
                          alpha: float = 0.6, beta: float = 0.4) -> pd.DataFrame:
@@ -867,56 +807,6 @@ def recommend_hybrid_ann(user_id: int, anchor_title: str, k: int,
 # ===============================
 # Pages
 # ===============================
-# def show_landing():
-#     st.markdown("<h1 class='main-header'>🎬 ANN Movie Recommender</h1>", unsafe_allow_html=True)
-#     st.markdown("<p class='sub-header'>Fast Approximate Nearest Neighbors (HNSW) for content, collaborative, and hybrid recommendations on Neo4j</p>", unsafe_allow_html=True)
-#     st.markdown("---")
-
-#     st.header("📖 Overview")
-#     st.write("""
-#     This app uses **Approximate Nearest Neighbors (ANN)** with **HNSW** to deliver fast and scalable 
-#     movie recommendations from a **Neo4j** graph:
-#     - **Content-based (ANN)**: multi-hot **genre vectors** per movie → cosine similarity
-#     - **Collaborative (ANN)**: **item vectors** over users (centered ratings) → cosine similarity
-#     - **Hybrid (ANN)**: weighted sum of normalized content & collaborative scores
-#     """)
-
-#     st.header("🔢 Mathematical Foundations (ANN)")
-#     c1, c2, c3 = st.tabs(["Content (Cosine)", "Collaborative (Item-ANN)", "Hybrid (Weighted)"])
-
-#     with c1:
-#         st.markdown("""
-#         <div class='math-formula'>
-#         Movie vector: x ∈ {0,1}^G (multi-hot genres)<br>
-#         Cosine similarity: cos(x,y) = (x · y) / (||x|| · ||y||)<br>
-#         ANN retrieves top-k neighbors using HNSW in cosine space.
-#         </div>
-#         """, unsafe_allow_html=True)
-
-#     with c2:
-#         st.markdown("""
-#         <div class='math-formula'>
-#         Item vector for movie i over users U: v_i[u] = r(u,i) - μ_i (mean-centered).<br>
-#         Normalize v_i, use cosine ANN to find nearest items to a user's profile vector:<br>
-#         p_u = average( v_i ; for i rated ≥ 4 by user u ).
-#         </div>
-#         """, unsafe_allow_html=True)
-
-#     with c3:
-#         st.markdown("""
-#         <div class='math-formula'>
-#         Normalize scores to [0,1]. Hybrid:<br>
-#         score(m) = α · content_score_norm(m) + β · cf_score_norm(m), with α+β=1.
-#         </div>
-#         """, unsafe_allow_html=True)
-
-#     st.header("🧱 Why ANN (HNSW)?")
-#     st.markdown("""
-#     - Sub-linear retrieval with excellent recall
-#     - Works with **cosine** space (ideal for normalized content/CF vectors)
-#     - Easy to rebuild when data updates
-#     """)
-
 
 
 
@@ -1017,16 +907,7 @@ def show_landing():
   c1, c2, c3 = st.tabs(["Content (Cosine)", "Collaborative (Item-ANN)", "Hybrid (Mixed)"])
 
   with c1:
-    # st.latex(r"""
-    # \textbf{Movie vector: } \mathbf{x} \in \{0,1\}^G \\
-    # \textbf{Cosine similarity: } \cos(\mathbf{x}, \mathbf{y}) = 
-    # \frac{\mathbf{x} \cdot \mathbf{y}}{\|\mathbf{x}\|\|\mathbf{y}\|} \\
-    # \textbf{HNSW retrieves top-}k \text{ nearest neighbors in cosine space.}
-    # """)
-    # st.markdown("""
-    # **Interpretation:** Movies sharing more genres (e.g., *Action*, *Sci-Fi*) have higher similarity.  
-    # A cosine similarity close to 1 means the movies are highly alike in theme.
-    # """)
+
 
     st.latex(r"""
     \textbf{Movie vector: } \mathbf{x} \in \mathbb{R}^G \\
@@ -1042,19 +923,6 @@ def show_landing():
     values near 1 indicate strong similarity.
     """)
 
-
-
-  # with c2:
-  #   st.latex(r"""
-  #   \textbf{Item vector: } v_i[u] = r(u,i) - \mu_i \\
-  #   \textbf{User profile: } \mathbf{p_u} = 
-  #   \frac{1}{|I_u|}\sum_{i \in I_u, r(u,i) > 4} v_i \\
-  #   \textbf{Similarity: } \cos(v_i, \mathbf{p_u})
-  #   """)
-  #   st.markdown("""
-  #   **Interpretation:** A user’s profile is built from items they rated **above 4** for instance (i.e., movies they loved).  
-  #   The system then finds new items rated highly by users with **similar profiles**.
-  #   """)
 
 
   with c2:
@@ -1263,6 +1131,7 @@ def show_landing():
   - [FAISS – Facebook AI Similarity Search](https://github.com/facebookresearch/faiss)  
   - [Annoy – Spotify Approximate Nearest Neighbors](https://github.com/spotify/annoy)  
   - [Voyager – Spotify HNSW-based ANN](https://github.com/spotify/voyager)  
+  - [comprehensive-guide-on-item-based-recommendation-systems](https://medium.com/data-science/comprehensive-guide-on-item-based-recommendation-systems-d67e40e2b75d)
   """)
 
   # st.markdown("---")
@@ -1337,12 +1206,38 @@ def ensure_data_and_indices():
         st.session_state.cf_index = build_hnsw_index(st.session_state.movie_vectors_cf, space="cosine")
 
 def show_dashboard():
-    driver = st.session_state.driver
-    st.title("📊 Recommendations Dashboard (ANN)")
-    st.markdown("---")
+    # driver = st.session_state.driver
+    # st.title("📊 Recommendations Dashboard (ANN)")
+    # st.markdown("---")
 
-    with st.spinner("Loading data & building ANN indices (first time only)..."):
-        ensure_data_and_indices()
+    # # with st.spinner("Loading data & building ANN indices (first time only)..."):
+    # #     ensure_data_and_indices()
+    # with st.spinner("Loading data & building ANN indices (first time only)..."):
+    #     data_ready = ensure_data_and_indices()
+    
+    # if not data_ready:
+    #     st.stop()  # stops Streamlit execution safely
+
+
+    driver = st.session_state.driver
+    st.title("📊 Movie Recommendations Dashboard")
+    st.markdown("---")
+    
+    # CHECK DATABASE FIRST - before calling ensure_data_and_indices
+    try:
+        stats = get_database_stats(driver)
+        database_is_empty = stats['movies'] == 0
+    except Exception as e:
+        st.error(f"Error checking database: {e}")
+        database_is_empty = True
+    
+    # Only build indices if database has data
+    if not database_is_empty:
+        with st.spinner("Loading data & building ANN indices (first time only)..."):
+            ensure_data_and_indices()
+
+            
+    
 
     # Tabs
     tab1,tab2,t1, t2, t3, tab7 = st.tabs(["📤 Upload Data",
@@ -1609,6 +1504,12 @@ def show_dashboard():
     
     # ==================== TAB 2: Descriptive Analysis ====================
     with tab2:
+                # ✅ Check if database has data before showing analysis
+      if database_is_empty:
+            st.warning("⚠️ **Database is empty!**")
+            st.info(" Please load data using the **'Upload Data'** tab first")
+        
+      else:
         st.header("📊 Descriptive Analysis")
         st.write("Explore your dataset with comprehensive statistics and visualizations")
         
@@ -1774,10 +1675,11 @@ def show_dashboard():
             
             st.markdown("---")
             
+
             # Data quality metrics
             st.subheader("🔍 Data Quality Metrics")
             
-            col1, col2, col3 = st.columns(3)
+            col1, col2, col3, col4 = st.columns(4)
             
             with col1:
                 sparsity = 1 - (stats['total_ratings'] / (stats['total_users'] * stats['total_movies']))
@@ -1787,34 +1689,54 @@ def show_dashboard():
             with col2:
                 coverage_users = (stats['total_ratings'] / stats['total_users'])
                 st.metric("User Coverage", f"{coverage_users:.1f}")
-                st.caption("Average ratings per user")
+                st.caption("Average ratings per user (user activity level)")
             
             with col3:
                 coverage_movies = (stats['total_ratings'] / stats['total_movies'])
                 st.metric("Movie Coverage", f"{coverage_movies:.1f}")
-                st.caption("Average ratings per movie")
+                st.caption("Average number of ratings each movie received (popularity)")
             
-            # Interpretation
+            with col4:
+                avg_movie_score = stats.get('avg_rating', None)
+                if avg_movie_score:
+                    st.metric("Average Rating Value", f"{avg_movie_score:.2f}")
+                    st.caption("How much movies are liked overall (1–5 scale)")
+                else:
+                    st.warning("Average movie rating unavailable.")
+            
+            # Interpretation section
             st.markdown("---")
             st.subheader("📊 Data Interpretation")
             
+            # Sparsity interpretation
             if sparsity > 0.99:
-                st.warning("⚠️ **High Sparsity**: Your dataset is very sparse (>99% missing values). This may affect recommendation quality.")
+                st.warning("⚠️ **High Sparsity**: Very few user–movie pairs are rated. This may affect recommendation accuracy.")
             elif sparsity > 0.95:
-                st.info("ℹ️ **Moderate Sparsity**: This is typical for recommendation datasets.")
+                st.info("ℹ️ **Moderate Sparsity**: Typical for MovieLens-like datasets — users rate selectively.")
             else:
-                st.success("✅ **Low Sparsity**: Good data density for recommendations!")
+                st.success("✅ **Low Sparsity**: Good data density for recommendation modeling!")
             
+            # Rating bias interpretation
             if stats['avg_rating'] > 3.5:
-                st.info(f"📈 **Rating Bias**: Average rating ({stats['avg_rating']:.2f}) is above neutral, indicating positive bias in the dataset.")
+                st.info(f"📈 **Positive Rating Bias**: Average rating ({stats['avg_rating']:.2f}) is above neutral, indicating that users tend to give high scores (e.g., 4★ and 5★).")
+            elif stats['avg_rating'] < 2.5:
+                st.warning(f"📉 **Negative Rating Bias**: Average rating ({stats['avg_rating']:.2f}) is below neutral — users are stricter or more critical.")
+            else:
+                st.success(f"⚖️ **Balanced Ratings**: Average rating ({stats['avg_rating']:.2f}) is around neutral (3★).")
             
         except Exception as e:
-            st.error(f"Error loading statistics: {str(e)}")
-            st.info("Make sure your database has data loaded. Try the 'Upload Data' tab first!")
-
-        #--------------
+                    st.error(f"Error loading statistics: {str(e)}")
+                    st.info("Make sure your database has data loaded. Try the 'Upload Data' tab first!")
+    
+                  
+          #--------------
     
     with t1:
+      if database_is_empty:
+            st.warning("⚠️ **Database is empty!**")
+            st.info(" Please load data using the **'Upload Data'** tab first")
+        
+      else:
         st.subheader("Content-based (ANN on genre vectors)")
         movies = st.session_state.movie_df["title"].tolist()
         movie_sel = st.selectbox("Select a movie", movies)
@@ -1844,6 +1766,11 @@ def show_dashboard():
 
 
     with t2:
+      if database_is_empty:
+            st.warning("⚠️ **Database is empty!**")
+            st.info(" Please load data using the **'Upload Data'** tab first")
+        
+      else:
         st.subheader("Collaborative (ANN on item vectors)")
         users = fetch_users(st.session_state.driver)
         if not users:
@@ -1868,6 +1795,12 @@ def show_dashboard():
                     
 
     with t3:
+        
+      if database_is_empty:
+            st.warning("⚠️ **Database is empty!**")
+            st.info(" Please load data using the **'Upload Data'** tab first")
+        
+      else:       
         st.subheader("Hybrid (α*Content + β*CF) via ANN")
         users = fetch_users(st.session_state.driver)
         movies = st.session_state.movie_df["title"].tolist()
@@ -1915,6 +1848,11 @@ def show_dashboard():
 
     # ==================== TAB 7: User Profile ====================
     with tab7:
+      if database_is_empty:
+            st.warning("⚠️ **Database is empty!**")
+            st.info(" Please load data using the **'Upload Data'** tab first")
+        
+      else:
         st.header("📝 User Profile")
         st.write("Explore what a user has watched and rated")
         

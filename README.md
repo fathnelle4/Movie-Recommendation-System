@@ -103,7 +103,8 @@ $$
 ## 8-Prerequisites
 
 Before running the app, ensure you have:
-1. **Neo4j Database** (Desktop, AuraDB, or Docker).  
+
+1. **Neo4j Database** (Desktop, AuraDB, or Docker) running 
 
 2. **MovieLens Dataset** (`movies.csv` & `ratings.csv`).  
 
@@ -162,6 +163,8 @@ If you experience issues setting up Neo4j, refer to the official [Neo4j Docs](ht
   - [FAISS - Facebook AI Similarity Search](https://github.com/facebookresearch/faiss)  
   - [Annoy - Spotify Approximate Nearest Neighbors](https://github.com/spotify/annoy)  
   - [Voyager - Spotify HNSW-based ANN](https://github.com/spotify/voyager)  
+  - [comprehensive-guide-on-item-based-recommendation-systems](https://medium.com/data-science/comprehensive-guide-on-item-based-recommendation-systems-d67e40e2b75d)
+
 
 ---
 
